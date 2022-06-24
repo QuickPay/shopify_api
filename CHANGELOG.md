@@ -4,6 +4,8 @@ Note: For changes to the API, see https://shopify.dev/changelog?filter=api
 
 ## Unreleased
 
+## Version 10.2.0
+
 - [#979](https://github.com/Shopify/shopify_api/pull/979) Update `ShopifyAPI::Context.setup` to take `old_api_secret_key` to support API credentials rotation
 
 ## Version 10.1.0
