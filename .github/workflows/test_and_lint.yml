@@ -1,0 +1,79 @@
+name: Test and Lint on Push and PR
+
+on: push
+
+jobs:
+  test:
+    runs-on: "ubuntu-20.04"
+    strategy:
+      matrix:
+        ruby:
+          - "2.7"
+          - "3.0"
+          - "3.1"
+    env:
+      RACK_ENV: test
+    steps:
+      - uses: actions/checkout@v2
+      - uses: QuickPay/quickpay-base-action@release
+        with:
+          rubocop: true
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - run: bundle exec rake test
+      - name: Audit dependencies for vulnerabilities
+        run: bundle exec bundle-audit update && bundle exec bundle-audit check
+  publish:
+    runs-on: "ubuntu-20.04"
+    needs: 
+      test
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: QuickPay/quickpay-base-action@release
+        with:
+          gem_github_credentials: ${{secrets.BUNDLE_RUBYGEMS__PKG__GITHUB__COM}}
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.0
+          bundler-cache: true
+      - name: Setup gem credentials
+        run: |
+          mkdir ~/.gem && echo ":github: Bearer ${{secrets.GITHUB_TOKEN}}" > ~/.gem/credentials && chmod 0600 ~/.gem/credentials
+      - name: Setup sources
+        run: |
+          echo "
+          :backtrace: false
+          :bulk_threshold: 1000
+          :sources:
+          - https://${{secrets.BUNDLE_RUBYGEMS__PKG__GITHUB__COM}}@rubygems.pkg.github.com/quickpay/
+          :update_sources: true
+          :verbose: true  
+          " > ~/.gemrc
+      - name: Retrieve versions
+        run: |
+          echo "##[set-output name=versions;]$(gem search '^shopify_api$' --all --prerelease | grep -o '\((.*)\)$' | tr -d '() ' | tr ',' "|" | sort)"
+        id: extract_versions
+      - name: Retrieve Current Versions
+        run: |
+          ruby -e "
+            require './lib/shopify_api/version.rb'
+            versions = '${{ steps.extract_versions.outputs.versions }}'.strip.split('|').map {|x| Gem::Version.new x }
+            unless versions.include? Gem::Version.new(ShopifyAPI::VERSION)
+              puts('##[set-output name=version;]' + ShopifyAPI::VERSION)
+            end
+          "
+        id: extract_version
+      - name: Push gem
+        if: ${{ steps.extract_version.outputs.version != '' }}
+        run: gem build && gem push --key github *.gem
+      - name: Create Release
+        if: ${{ steps.extract_version.outputs.version != '' }}
+        uses: zendesk/action-create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.extract_version.outputs.version }}
+          release_name: Release ${{ steps.extract_version.outputs.version }}

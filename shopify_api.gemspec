@@ -3,49 +3,49 @@
 $LOAD_PATH.push(File.expand_path("../lib", __FILE__))
 require "shopify_api/version"
 
-Gem::Specification.new do |s|
-  s.name = "shopify_api"
-  s.version = ShopifyAPI::VERSION
-  s.author = "Shopify"
+Gem::Specification.new do |gem|
+  gem.name = "shopify_api"
+  gem.version = ShopifyAPI::VERSION
+  gem.author = ["QuickPay"]
 
-  s.summary = "The gem for accessing the Shopify API"
-  s.description = <<~HERE
+  gem.summary = "The gem for accessing the Shopify API"
+  gem.description = <<~HERE
     This gem allows Ruby developers to programmatically access the admin
     section of Shopify stores.
   HERE
-  s.email = "developers@shopify.com"
-  s.homepage = "https://shopify.dev/apps"
+  gem.email = ["support@quickpay.net"]
+  gem.homepage = "http://quickpay.net"
 
-  s.metadata["allowed_push_host"] = "https://rubygems.org"
+  gem.metadata["allowed_push_host"] = "https://rubygems.pkg.github.com/QuickPay"
 
-  s.extra_rdoc_files = [
+  gem.extra_rdoc_files = [
     "LICENSE",
     "README.md",
   ]
-  s.files = Dir.chdir(File.expand_path("..", __FILE__)) do
+  gem.files = Dir.chdir(File.expand_path("..", __FILE__)) do
     %x(git ls-files -z).split("\x0").reject { |f| f.match(%r{^(test)/}) }
   end
 
-  s.rdoc_options = ["--charset=UTF-8"]
+  gem.rdoc_options = ["--charset=UTF-8"]
 
-  s.license = "MIT"
+  gem.license = "MIT"
 
-  s.required_ruby_version = ">= 2.6"
+  gem.required_ruby_version = ">= 2.6"
 
-  s.add_runtime_dependency("concurrent-ruby")
-  s.add_runtime_dependency("hash_diff")
-  s.add_runtime_dependency("httparty")
-  s.add_runtime_dependency("jwt")
-  s.add_runtime_dependency("oj")
-  s.add_runtime_dependency("securerandom")
-  s.add_runtime_dependency("sorbet-runtime")
-  s.add_runtime_dependency("zeitwerk", "~> 2.5")
+  gem.add_runtime_dependency("concurrent-ruby")
+  gem.add_runtime_dependency("hash_diff")
+  gem.add_runtime_dependency("httparty")
+  gem.add_runtime_dependency("jwt")
+  gem.add_runtime_dependency("oj")
+  gem.add_runtime_dependency("securerandom")
+  gem.add_runtime_dependency("sorbet-runtime")
+  gem.add_runtime_dependency("zeitwerk", "~> 2.5")
 
-  s.add_development_dependency("activesupport")
-  s.add_development_dependency("rake")
-  s.add_development_dependency("rubocop")
-  s.add_development_dependency("rubocop-shopify")
-  s.add_development_dependency("rubocop-sorbet")
-  s.add_development_dependency("sorbet")
-  s.add_development_dependency("tapioca")
+  gem.add_development_dependency("activesupport")
+  gem.add_development_dependency("rake")
+  gem.add_development_dependency("rubocop")
+  gem.add_development_dependency("rubocop-shopify")
+  gem.add_development_dependency("rubocop-sorbet")
+  gem.add_development_dependency("sorbet")
+  gem.add_development_dependency("tapioca")
 end
