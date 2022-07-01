@@ -15,10 +15,14 @@ module ShopifyAPI
 
           received_signature = verifiable_query.hmac
           computed_signature = compute_signature(verifiable_query.to_signable_string)
-          OpenSSL.secure_compare(computed_signature, received_signature)
+          secure_compare(computed_signature, received_signature)
         end
 
         private
+
+        def secure_compare(a, b)
+          a.bytesize == b.bytesize && a == b
+        end
 
         sig { params(signable_string: String).returns(String) }
         def compute_signature(signable_string)
