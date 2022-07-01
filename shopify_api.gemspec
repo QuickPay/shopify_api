@@ -42,6 +42,7 @@ Gem::Specification.new do |gem|
   gem.add_runtime_dependency("zeitwerk", "~> 2.5")
 
   gem.add_development_dependency("activesupport")
+  gem.add_development_dependency "bundler-audit"
   gem.add_development_dependency("rake")
   gem.add_development_dependency("rubocop")
   gem.add_development_dependency("rubocop-shopify")
