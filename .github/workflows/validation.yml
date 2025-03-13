@@ -1,0 +1,22 @@
+name: Checkmarx Security Scan
+
+on:
+  push:
+    branches: [ master,main ]
+    paths-ignore: [ '.github/**', 'docs/**', 'tools/**', 'catalog-info.yaml', 'README.md' ]
+  pull_request:
+    paths-ignore: [ '.github/**', 'doc/**', 'tools/**', 'catalog-info.yaml', 'README.md' ]  
+  workflow_dispatch:
+
+jobs:
+  security-scan:
+    #main for latest if you dare
+    uses: unzercorp/unzer-tech-toolbox/.github/workflows/security-scan.yaml@ci-github/1.6
+     with:
+      # non-pci
+      cx_threshold_preset: "relaxed"
+      # pci-dss, high security, public
+      cx_threshold_preset: "strict"
+    secrets:
+      CX_CLIENT_ID: ${{ secrets.CX_NON_PCI_QP_CORP_CLIENT_ID  }}
+      CX_CLIENT_SECRET: ${{ secrets.CX_NON_PCI_QP_CORP_CLIENT_SECRET }}
